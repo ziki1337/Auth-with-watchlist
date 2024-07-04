@@ -23,6 +23,7 @@ export class UserController {
   @Delete()
   deleteUser(@Req() request) {
     const user = request.user;
+    
     return this.usersService.deleteUser(user.email)
   }
 }
