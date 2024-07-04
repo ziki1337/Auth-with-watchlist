@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';  //через этот модуль происходит коннект к бд постгресс
 import configurations from '../../configurations'
 import { user } from '../user/models/user.model';
+import { AuthModule } from '../auth/auth.module';
+import { TokenModule } from '../token/token.module';
 
 
 @Module({
@@ -29,7 +31,9 @@ import { user } from '../user/models/user.model';
         models: [user] 
       })
     }),
-    UserModule
+    UserModule,
+    AuthModule,
+    TokenModule
   ],
   controllers: [AppController],
   providers: [AppService],
