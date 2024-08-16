@@ -15,11 +15,12 @@ export class AuthService {
         private readonly tokenService: TokenService
     ) { }
 
-    async registerUsers (dto: CreateUserDTO): Promise<CreateUserDTO> {
+    async registerUsers (dto: CreateUserDTO): Promise<AuthUserResponse> {
         try {
             const existUser = await this.UserServise.findUserByEmail(dto.email);
             if (existUser) throw new BadRequestException(AppError.USER_EXIST) // BadRequestException выбрасывает ошибку
-            return this.UserServise.createUser(dto);
+            await this.UserServise.createUser(dto);
+            return this.UserServise.publicUser(dto.email);
         }
         catch (e) {
             throw new Error(e)
@@ -32,9 +33,7 @@ export class AuthService {
             if(!existUser) throw new BadRequestException(AppError.USER_NOT_EXIST);
             const validatePassword = await bcrypt.compare(dto.password, existUser.password);
             if (!validatePassword) throw new BadRequestException(AppError.WRONG_DATA);
-            const user = await this.UserServise.publicUser(dto.email)
-            const token = await this.tokenService.generateJwtToken(user);
-            return {user, token};
+            return this.UserServise.publicUser(dto.email);
         }
         catch (e) {
             throw new Error(e)
